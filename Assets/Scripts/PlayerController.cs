@@ -9,19 +9,22 @@ using UnityEngine.InputSystem;
 public class PlayerController : MonoBehaviour
 {
     public GameObject player;
+    public Transform orientation;
+    public LayerMask groundMask;
     public float speed;
     public float jumpForce;
     public float groundDrag;
     public float airDrag;
     public float movementMultiplier;
     public float airMultiplier;
-    
+
     private Rigidbody rb;
     private Vector3 moveDirection;
     private float movementX;
     private float movementY;
+    private float distance = 1.05f;
+    private float groundDistance = 0.4f;
     private bool isGrounded;
-    
     private void Awake()
     {
         player = gameObject;
@@ -32,11 +35,10 @@ public class PlayerController : MonoBehaviour
 
     private void Update()
     {
-        float distance = 1.05f;
-        Debug.Log(distance);
-        isGrounded = Physics.Raycast(transform.position, transform.TransformDirection(Vector3.down), distance);
-        Debug.DrawRay(transform.position, transform.TransformDirection(Vector3.down) * (distance) , Color.red);
-        Debug.Log(isGrounded);
+        isGrounded = Physics.CheckSphere(transform.position - new Vector3(0, 1, 0), groundDistance, groundMask);
+        //isGrounded = Physics.Raycast(transform.position, transform.TransformDirection(Vector3.down), distance);
+        //Debug.DrawRay(transform.position, transform.TransformDirection(Vector3.down) * (distance) , Color.red);
+        //Debug.Log(isGrounded);
         
         ControlDrag();
     }
@@ -72,7 +74,7 @@ public class PlayerController : MonoBehaviour
     
     void Movement()
     {
-        moveDirection = transform.forward * movementY + transform.right * movementX;
+        moveDirection = orientation.forward * movementY + orientation.right * movementX;
 
         if (isGrounded)
         {
