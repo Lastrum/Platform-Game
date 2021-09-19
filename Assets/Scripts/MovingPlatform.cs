@@ -7,55 +7,38 @@ using UnityEngine;
 public class MovingPlatform : MonoBehaviour
 {
     public float speed;
-    public float distance;
-    public float delay;
-    public Rigidbody rb;
     
-    private Rigidbody platformRb;
-    private Vector3 startPos;
-    private Vector3 endPos;
-    private bool isOnPlatform;
-    
-    private void Awake()
+    private Transform startPos;
+    private float step;
+    private Vector3 target;
+    private bool readyCheck;
+
+    private Rigidbody rb;
+    private void Start()
     {
-        platformRb = gameObject.GetComponent<Rigidbody>();
-        startPos = transform.position;
-        endPos = new Vector3(startPos.x + distance, transform.position.y, transform.position.z);
+        rb = GetComponent<Rigidbody>();
+        readyCheck = false;
+        startPos = transform;
+        target = new Vector3(startPos.position.x, startPos.position.y + 10, startPos.position.z);
     }
-    
-    void MovePlatform()
+    private void Update()
     {
-        if (Vector3.Distance(transform.position, endPos) > 0.1)
+        if (readyCheck)
         {
-            platformRb.velocity = new Vector3(speed, 0, 0);
-        }
-        else
-        {
-            //platformRb.velocity = new Vector3(0, 0, 0);
-        }
-        
-    }    
-    
-    private void FixedUpdate()
-    {
-        MovePlatform();
-        if (isOnPlatform)
-        {
-            rb.velocity = platformRb.velocity;
+            step =  speed * Time.deltaTime;
+            //transform.position = Vector3.MoveTowards(transform.position, target, step );
+            //rb.MovePosition(Vector3.up * Time.deltaTime * speed);
+            rb.velocity = new Vector3(0, speed, 0);
         }
     }
 
     private void OnTriggerEnter(Collider other)
     {
-        Debug.Log("entered");
-        Debug.Log(rb.gameObject.name);
-
-        isOnPlatform = true;
+        readyCheck = true;
     }
     
     private void OnTriggerExit(Collider other)
     {
-        Debug.Log("exit");
-        isOnPlatform = false;
+        readyCheck = false;
     }
 }
