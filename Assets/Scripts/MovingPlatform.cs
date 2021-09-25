@@ -6,39 +6,77 @@ using UnityEngine;
 
 public class MovingPlatform : MonoBehaviour
 {
+    public Vector3 endPoint;
     public float speed;
+    public static bool onPlatform = false;
     
-    private Transform startPos;
-    private float step;
-    private Vector3 target;
-    private bool readyCheck;
-
+    private Rigidbody playerRb;
     private Rigidbody rb;
-    private void Start()
+    private int point;
+    private Vector3 startPoint;
+    private Vector3 targetPoint;
+    private bool isBack;
+    private float playerSpeed;
+    void Start ()
     {
+        playerSpeed = speed + (speed * 0.1f);
+        Debug.Log("Player Speed: " + playerSpeed);
+        startPoint = transform.position;
+        targetPoint = endPoint;
+        point = 0;
+        isBack = false;
         rb = GetComponent<Rigidbody>();
-        readyCheck = false;
-        startPos = transform;
-        target = new Vector3(startPos.position.x, startPos.position.y + 10, startPos.position.z);
     }
-    private void Update()
+    void FixedUpdate ()
     {
-        if (readyCheck)
+        Moving();
+        if (playerRb != null && onPlatform)
         {
-            step =  speed * Time.deltaTime;
-            //transform.position = Vector3.MoveTowards(transform.position, target, step );
-            //rb.MovePosition(Vector3.up * Time.deltaTime * speed);
-            rb.velocity = new Vector3(0, speed, 0);
+            if (PlayerController.isMoving)
+            {
+                return;
+            }
+            
+            playerRb.velocity = transform.forward * playerSpeed;
         }
     }
 
-    private void OnTriggerEnter(Collider other)
+    private void Moving()
     {
-        readyCheck = true;
+        if (Vector3.Distance(targetPoint, transform.position) < 0.1f)
+        {
+            if (isBack)
+            {
+                isBack = false;
+                targetPoint = endPoint;
+            }
+            else
+            {
+                targetPoint = startPoint;
+                isBack = true;
+            }
+        }
+        Quaternion targetRotation = Quaternion.LookRotation(targetPoint - transform.position);
+        transform.rotation = targetRotation;
+
+        rb.velocity = transform.forward * speed;
     }
     
+    private void OnTriggerEnter(Collider other)
+    {
+        if (other.CompareTag("Player"))
+        {
+            onPlatform = true;
+            playerRb = other.GetComponent<Rigidbody>();
+        }
+    }
+
     private void OnTriggerExit(Collider other)
     {
-        readyCheck = false;
+        if (other.CompareTag("Player"))
+        {
+            onPlatform = false;
+            playerRb = null;
+        }
     }
 }

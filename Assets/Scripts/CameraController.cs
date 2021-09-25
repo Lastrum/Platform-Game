@@ -9,8 +9,10 @@ public class CameraController : MonoBehaviour
      public float sensX;
      public float sensY;
 
+     public Transform gunTransform;
+     public Transform eyeTransform;
      public Transform camTransform = null;
-     public Transform PlayerTransform = null;
+     public Transform playerTransform = null;
      public Transform orientation;
      
     float mouseX;
@@ -44,7 +46,9 @@ public class CameraController : MonoBehaviour
         movementX = Mathf.Clamp(movementX, -90f, 90f);
         
         camTransform.transform.rotation = Quaternion.Euler(movementX, movementY, 0);
-        //PlayerTransform.transform.rotation = Quaternion.Euler(0, movementY, 0);
+        gunTransform.transform.rotation = Quaternion.Euler(movementX, movementY, 0);
+        eyeTransform.transform.rotation = Quaternion.Euler(movementX, movementY, 0);
+        playerTransform.rotation = Quaternion.Euler(0, movementY, 0);
         orientation.transform.rotation = Quaternion.Euler(0, movementY, 0);
     }
 }
