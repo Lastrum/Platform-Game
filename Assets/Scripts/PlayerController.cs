@@ -1,11 +1,14 @@
 using System;
 using System.Collections;
 using System.Collections.Generic;
+using System.Numerics;
 using TMPro;
 using Unity.VisualScripting;
 using UnityEngine;
 using UnityEngine.EventSystems;
 using UnityEngine.InputSystem;
+using Vector2 = UnityEngine.Vector2;
+using Vector3 = UnityEngine.Vector3;
 
 public class PlayerController : MonoBehaviour
 {
@@ -29,6 +32,7 @@ public class PlayerController : MonoBehaviour
     public float airMultiplier;
 
     public static bool isMoving;
+    public static string whatLevel;
     
     private Rigidbody rb;
     private Vector3 moveDirection;
@@ -60,10 +64,8 @@ public class PlayerController : MonoBehaviour
     {
         elapsedTime += Time.deltaTime;
         isGrounded = Physics.CheckSphere(transform.position - new Vector3(0, 1, 0), groundDistance, groundMask);
-        //isGrounded = Physics.Raycast(transform.position, transform.TransformDirection(Vector3.down), distance);
-        //Debug.DrawRay(transform.position, transform.TransformDirection(Vector3.down) * (distance) , Color.red);
-        //Debug.Log(isGrounded);
-
+        CheckLevel();
+        
         if (movementVector.x != 0f || movementVector.y != 0f)
         {
             isMoving = true;
@@ -75,6 +77,16 @@ public class PlayerController : MonoBehaviour
         
         ControlDrag();
         Reload();
+    }
+
+    void CheckLevel()
+    {
+        RaycastHit hit;
+        if (Physics.Raycast(transform.position, Vector3.down, out hit, Mathf.Infinity))
+        {
+            whatLevel = hit.collider.gameObject.tag;
+            Debug.Log("player hit: " + hit.collider.gameObject.tag);
+        }
     }
     
     void OnMove(InputValue movementValue)

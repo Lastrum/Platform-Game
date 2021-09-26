@@ -8,7 +8,13 @@ public class Antigravity : MonoBehaviour
 {
     public float force = 5;
     private Rigidbody rb;
-    
+    public float lifeTime = 20;
+
+    private void Start()
+    {
+        Destroy(gameObject, lifeTime);
+    }
+
     private void OnTriggerStay(Collider other)
     {
         rb = other.GetComponent<Rigidbody>();

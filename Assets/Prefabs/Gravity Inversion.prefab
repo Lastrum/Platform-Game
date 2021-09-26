@@ -1295,7 +1295,7 @@ GameObject:
   - component: {fileID: 8584402489007955308}
   m_Layer: 0
   m_Name: Gravity Inversion
-  m_TagString: Untagged
+  m_TagString: Gravity
   m_Icon: {fileID: 0}
   m_NavMeshLayer: 0
   m_StaticEditorFlags: 0
@@ -1308,8 +1308,8 @@ Transform:
   m_PrefabAsset: {fileID: 0}
   m_GameObject: {fileID: 8584402489007955307}
   m_LocalRotation: {x: 0, y: 0, z: 0, w: 1}
-  m_LocalPosition: {x: 0, y: 20.5, z: 11.02}
-  m_LocalScale: {x: 5, y: 20, z: 5}
+  m_LocalPosition: {x: 0, y: 10.5, z: 11.02}
+  m_LocalScale: {x: 5, y: 10, z: 5}
   m_Children:
   - {fileID: 8584402488560104304}
   m_Father: {fileID: 0}
@@ -2573,3 +2573,4 @@ MonoBehaviour:
   m_Name: 
   m_EditorClassIdentifier: 
   force: 2
+  lifeTime: 10
