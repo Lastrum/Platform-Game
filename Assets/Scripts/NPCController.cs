@@ -30,14 +30,12 @@ public class NPCController : MonoBehaviour
     private bool lockOnMode;
     private bool zoneSpawned;
     private bool isWaiting;
-    private bool invokeSent;
     private string whatLevel;
-
+    
     public static UnityEvent ZoneReady;
     
     private void Start()
     {
-        invokeSent = false;
         isWaiting = true;
         zoneSpawned = false;
         chaseMode = true;
@@ -57,7 +55,7 @@ public class NPCController : MonoBehaviour
     private void Update()
     {
         UpdateHealth();
-
+        Debug.Log("Zone: " + !GameObject.FindWithTag("Gravity"));
     }
     
     void OnCollisionEnter(Collision collision)
@@ -95,26 +93,24 @@ public class NPCController : MonoBehaviour
         ZoneEvent.CancelCall.Invoke();
     }
 
+    private void SpawnZone()
+    {
+        ShootZone();
+    }
     public void ShootZone()
     {
         if (!GameObject.FindWithTag("Gravity"))
         {
             zoneSpawned = false;
         }
-        
         if (!zoneSpawned && !GameObject.FindWithTag("Gravity"))
         {
             Instantiate(zone, player.transform.position, player.transform.rotation);
             zoneSpawned = true;
+            StartCoroutine("Reset");
         }
-        invokeSent = false;
     }
-
-    private void SpawnZone()
-    {
-        ShootZone();
-    }
-
+    
     IEnumerator Waiting()
     {
         RaycastHit hit;
@@ -140,7 +136,7 @@ public class NPCController : MonoBehaviour
     IEnumerator Chase()
     {
         yield return new WaitForSeconds(1);
-        
+        if (whatLevel != PlayerController.whatLevel) StartCoroutine("Waiting");
         lockOnMode = false;
         while (Vector3.Distance(rb.position, player.transform.position) >= lockOnDistance)
         {
@@ -162,27 +158,11 @@ public class NPCController : MonoBehaviour
         yield return new WaitForSeconds(1);
         StartCoroutine("Jump");
         StartCoroutine("CheckInRange");
-        StartCoroutine("CheckInvoke");
-        //ZoneEvent.Zone.Invoke();
+        ZoneEvent.Zone.Invoke();
         
         yield break;
     }
-
-    private IEnumerator CheckInvoke()
-    {
-        while (lockOnMode)
-        {
-            if (!invokeSent)
-            {
-                ZoneEvent.Zone.Invoke();
-                invokeSent = true;
-            }
-            yield return new WaitForSeconds(1);
-        }
-        
-        yield break;
-    }
-
+    
     IEnumerator Jump()
     {
         while (lockOnMode)

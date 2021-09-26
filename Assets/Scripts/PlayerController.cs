@@ -35,6 +35,7 @@ public class PlayerController : MonoBehaviour
     public static string whatLevel;
     
     private Rigidbody rb;
+    private AudioSource audio;
     private Vector3 moveDirection;
     private float movementX;
     private float movementY;
@@ -51,6 +52,8 @@ public class PlayerController : MonoBehaviour
         rb = GetComponent<Rigidbody>();
         rb.drag = groundDrag;
         rb.freezeRotation = true;
+        
+        audio = GetComponent<AudioSource>();
     }
 
     private void Start()
@@ -146,6 +149,7 @@ public class PlayerController : MonoBehaviour
         if (elapsedTime >= shootRate && ammo > 0)
         {
             ammo -= 1;
+            audio.Play(0);
             Instantiate(bullet, bulletSpawnPoint.transform.position, bulletSpawnPoint.transform.rotation);
             elapsedTime = 0.0f;
             
